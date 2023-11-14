@@ -10,23 +10,39 @@ namespace EFCoreExample.Models
 {
     public partial class HighScoresContext
     {
-        public void AddGame(string name,int minimumAge)
+       public List<Game> AllGamesByMinimumAge(int age)
         {
-            Game game = new Game() { Name = name, MinimumAge = minimumAge } ;
+            return this.Games.Where(x=>x.MinimumAge>=age).OrderBy(x=>x.MinimumAge).ToList();
+        }
+
+        public void AddGame(Game game)
+        {
             this.Games.Add(game);
             this.SaveChanges();
-
-           
         }
 
-        public void RemoveGame(string name) 
+        public void RemoveGame(Game game) 
         {
-            IEnumerable<Game> games = this.Games.Where(x => x.Name == name).AsEnumerable() ;
-            if(games != null)
+            var games = this.Games.Where(x => x.Name == game.Name);
+           foreach(var g in games)
             {
-                this.Games.RemoveRange(games);
-                this.SaveChanges();
+                this.Remove(g); 
             }
+            this.SaveChanges();
         }
+
+        public void UpdateMinimumAge(Game game, int minimumAge)
+        {
+            var games = this.Games.Where(x => x.Name == game.Name);
+            foreach (var g in games)
+            {
+                g.MinimumAge = minimumAge;
+
+            }
+            this.SaveChanges();
+        }
+
+        
     }
+
 }

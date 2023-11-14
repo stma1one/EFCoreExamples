@@ -8,33 +8,62 @@ namespace EFCoreExample
         static void Main(string[] args)
         {
             
-            using( HighScoresContext db=new HighScoresContext())
+           HighScoresContext context = new HighScoresContext();
+            try
             {
-                try
+                foreach (var game in context.AllGamesByMinimumAge(7))
                 {
-                    db.AddGame("Space Invaders", 4);
-                      Console.WriteLine( "-------Add game------");
-                    foreach(var game in db.Games)
-                    {
-                        Console.WriteLine($"{ game.Name},{game.MinimumAge}");
-                    }
+                    Console.WriteLine($"{game.Name}  {game.MinimumAge}");
                 }
-                catch (Exception ex) { }
+              
+            }
 
-                try
+
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
+        
+            Game g=new Game() { Name="Fortnite      ", MinimumAge = 7 };
+            
+            context.AddGame(g);
+
+            try
+            {
+                Console.WriteLine("-----after adding game------"  );
+                foreach (var game in context.AllGamesByMinimumAge(7))
                 {
-                    db.RemoveGame("Space Invaders");
-                    Console.WriteLine("-------Remove game------");
-                    foreach (var game in db.Games)
-                    {
-                        Console.WriteLine($"{game.Name},{game.MinimumAge}");
-                    }
-
+                    Console.WriteLine($"{game.Name}  {game.MinimumAge}");
                 }
-                catch ( Exception ex) { }
 
             }
-            
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
+
+
+            //context.RemoveGame(g);  
+            //try
+            //{
+            //    Console.WriteLine("-----after Removing game------");
+            //    foreach (var game in context.AllGamesByMinimumAge(7))
+            //    {
+            //        Console.WriteLine($"{game.Name}  {game.MinimumAge}");
+            //    }
+
+            //}
+            //catch (Exception ex) { Console.WriteLine(ex.Message); }
+
+            context.UpdateMinimumAge(g, 10);
+
+            try
+            {
+                Console.WriteLine("-----after Removing game------");
+                foreach (var game in context.AllGamesByMinimumAge(7))
+                {
+                    Console.WriteLine($"{game.Name}  {game.MinimumAge}");
+                }
+
+            }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
         }
+        
+       
+      
     }
 }
