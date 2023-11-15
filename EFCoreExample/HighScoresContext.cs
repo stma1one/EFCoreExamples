@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Internal;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace EFCoreExample.Models
 {
     public partial class HighScoresContext
     {
+
        public List<Game> AllGamesByMinimumAge(int age)
         {
             return this.Games.Where(x=>x.MinimumAge>=age).OrderBy(x=>x.MinimumAge).ToList();
@@ -40,6 +42,18 @@ namespace EFCoreExample.Models
 
             }
             this.SaveChanges();
+        }
+
+
+        public void AddPlayer(Player player)
+        {
+            this.Players.Add(player);
+            this.SaveChanges();
+        }
+        public IEnumerable<PlayerHighScore> GetOrderedHighScores()
+        {
+            return this.PlayerHighScores.OrderBy(x => x.HighScore);
+
         }
 
         
