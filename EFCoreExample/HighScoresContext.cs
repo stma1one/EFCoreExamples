@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -55,7 +57,32 @@ namespace EFCoreExample.Models
             return this.PlayerHighScores.OrderBy(x => x.HighScore);
 
         }
+        //Include מאפשר לאחזר רשומות מקושרות
+        public IEnumerable<PlayerHighScore> GetOrderedHighScoresWithPlayerDetails()
+        {
+            return this.PlayerHighScores.OrderBy(x => x.HighScore).Include(x=>x.Player);
 
+        }
+
+        //אם צריך רשומות מקושרות ברמה נוספת
+        //נשתמש בthenInclude
+        public IEnumerable<Player> GetPlayerDetails()
+        {
+         //החזרת השחקנים עם אוסף התוצאות שלהם ולכל תוצאה החזר גם את נתוני המשחקים המקושרים   
+            return this.Players.Include(x => x.PlayerHighScores).ThenInclude(x => x.Game.PlayerHighScores);
+        }
+
+        public IEnumerable<Game> GamesByScore()
+        {
+            return this.Games.AsNoTracking().OrderByDescending(x => x.PlayerHighScores.Max(x => x.HighScore)).Include(x => x.PlayerHighScores);
+        }
+        public void AddPlayer2(Player player)
+        {
+            this.Entry(player).State=EntityState.Added;
+            //this.Entry(player).State= EntityState.Modified;
+            //this.Entry(player).State=EntityState.Deleted;
+            this.SaveChanges();
+        }
         
     }
 
